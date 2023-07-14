@@ -1,5 +1,6 @@
 // Import the Post model
 const Post = require('../models/post');
+const User = require('../models/user');
 // import Op from sequelize
 const Op = require('sequelize').Op;
 
@@ -31,7 +32,12 @@ exports.createPost = (req, res, next) => {
 // Get all post
 exports.getAllPost = (req, res, next) => {
     // Get all post
-    Post.findAll().then(result => {
+    Post.findAll({
+        include: {
+            model: User,
+            attributes: ['id', 'fullname', 'email']
+        }
+    }).then(result => {
         res.status(200).json({
             message: 'Get all post successfully',
             posts: result
@@ -53,6 +59,10 @@ exports.getAllPostByUserId = (req, res, next) => {
     Post.findAll({
         where: {
             userId: userId
+        },
+        include: {
+            model: User,
+            attributes: ['id', 'fullname', 'email']
         }
     }).then(result => {
         res.status(200).json({
@@ -76,6 +86,10 @@ exports.getPostByUserLogged = (req, res, next) => {
     Post.findAll({
         where: {
             userId: userId
+        },
+        include: {
+            model: User,
+            attributes: ['id', 'fullname', 'email']
         }
     }).then(result => {
         res.status(200).json({
@@ -96,7 +110,12 @@ exports.getPostById = (req, res, next) => {
     const postId = req.params.postId;
 
     // Find post by id
-    Post.findByPk(postId).then(result => {
+    Post.findByPk(postId, {
+        include: {
+            model: User,
+            attributes: ['id', 'fullname', 'email']
+        }
+    }).then(result => {
         if (!result) {
             const error = new Error('Post not found');
             error.statusCode = 404;
@@ -126,6 +145,10 @@ exports.searchPostByTitle = (req, res, next) => {
             title: {
                 [Op.like]: `%${criteria}%`
             }
+        },
+        include: {
+            model: User,
+            attributes: ['id', 'fullname', 'email']
         }
     }).then(result => {
         res.status(200).json({
