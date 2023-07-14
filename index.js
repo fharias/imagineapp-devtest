@@ -35,6 +35,12 @@ app.use((req, res, next) => {
 // Set base path api
 // Register user endpoint
 app.use('/', registerRoutes);
+// Adding Heltcheck endpoint
+app.get('/health-check', (req, res, next) => {
+    res.status(200).json({
+        message: 'Hello from server'
+    });
+});
 // Add post routes to the app
 app.use('/post', isAuth, postRoutes);
 // Add user routes to the app
