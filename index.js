@@ -45,7 +45,21 @@ app.get('/health-check', (req, res, next) => {
 app.use('/post', isAuth, postRoutes);
 // Add user routes to the app
 app.use('/user', isAuth, userRoutes);
-
+// Handle error if route not found
+app.use((req, res, next) => {
+    const error = new Error('Route not found');
+    error.statusCode = 404;
+    throw error;
+});
+// Handle error 
+app.use((err, req, res, next) => {
+    console.log(err);
+    const status = err.statusCode || 500;
+    const message = err.message;
+    res.status(status).json({
+        message: message
+    });
+});
 // Sync all models with database
 sequelize.sync().then(result => {
     console.log(`Connected to database successfully`)
